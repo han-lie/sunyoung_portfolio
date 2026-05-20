@@ -10,7 +10,7 @@ const slides = [
     mediaShiftY: "-1.75%",
     disableInfo: true,
     overlayHtml:
-      '<div class="cover-block"><div class="cover-title">Sunyoung Lie</div><div class="cover-copy">Data portfolio: products that advance nonprofit strategic goals through data collection, analysis, visualization, and knowledge management</div></div>',
+      '<div class="cover-block"><div class="cover-title">Sunyoung Lie</div><div class="cover-copy">Data portfolio: products that advance nonprofit strategic goals through data collection, analysis, visualization,<br />and knowledge management</div></div>',
   },
   {
     title: "Placements vs. Actively Homeless Animation",
