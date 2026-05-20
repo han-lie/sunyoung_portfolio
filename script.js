@@ -97,13 +97,11 @@ const slides = [
     title: "",
     summary:
       "Dataforprogress.org landing page.\n\nThe client needed a captivating home page that communicated the extent of corporate involvement in key legislative issues.",
-    screen: "./assets/animated/cap-logos-type.gif",
+    screen: "./assets/animated/cap-logos-type-locked.gif",
     thumb: "./assets/thumbs/page-11.jpg",
     mediaScale: 1.02,
     mediaShiftX: "0",
     mediaShiftY: "-1.75%",
-    overlayHtml:
-      '<div class="stage-overlay-card"><h3>Accountable Allies:</h3><p>These corporations have<br />contributed to anti-Abortion<br />legislation</p></div>',
   },
   {
     title: "Data for Progress Social Media visualization",
