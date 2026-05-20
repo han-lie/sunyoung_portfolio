@@ -94,7 +94,7 @@ const slides = [
     mediaShiftY: "-1.75%",
   },
   {
-    title: "Data for Progress Landing Page",
+    title: "",
     summary:
       "Dataforprogress.org landing page.\n\nThe client needed a captivating home page that communicated the extent of corporate involvement in key legislative issues.",
     screen: "./assets/animated/cap-logos-type.gif",
@@ -106,9 +106,8 @@ const slides = [
       '<div class="stage-overlay-card"><h3>Accountable Allies:</h3><p>These corporations have<br />contributed to anti-Abortion<br />legislation</p></div>',
   },
   {
-    title: "Data for Progress Visualization",
-    summary:
-      "Dataforprogress.org data visualization.\n\nThis graphic was retweeted by Nate Silver.",
+    title: "Data for Progress Social Media visualization",
+    summary: "Retweeted by Nate Silver",
     screen: "./assets/screens/page-12-reference.png",
     thumb: "./assets/thumbs/page-12.jpg",
     mediaScale: 1,
@@ -116,7 +115,7 @@ const slides = [
     mediaShiftY: "-1.75%",
   },
   {
-    title: "Exalt Graduation Invitation",
+    title: "",
     summary:
       "Graduation invitation.\n\nAfter many years operating a beloved in person community space for NYC teens, exalt needed a compelling way to communicate the robust work it was continuing to do and celebrate during Covid remote restrictions.",
     screen: "./assets/animated/exalt-gala-flyer.gif",
@@ -128,7 +127,7 @@ const slides = [
   {
     title: "Income Inequality Publication",
     summary:
-      "Question: how can we effectively communicate the extent of income inequality?\n\nPublication for the New York State Assembly.",
+      "Question: how can we effectively communicate the extent of income inequality?\nCreated for New York State legislation amendment.",
     screen: "./assets/screens/page-14.jpg",
     thumb: "./assets/thumbs/page-14.jpg",
     mediaScale: 1,
@@ -138,7 +137,7 @@ const slides = [
   {
     title: "YMCA NYC Branch Monitoring",
     summary:
-      "Question: how can we prepare for possible branch closures by monitoring Covid rates and vaccinations near our branches?\n\nClient: YMCA NYC.",
+      "Question: how can we prepare for possible branch closures by monitoring Covid rates and vaccinations near our branches?",
     screen: "./assets/screens/page-15-reference.png",
     thumb: "./assets/thumbs/page-15.jpg",
     mediaScale: 1,
@@ -147,8 +146,7 @@ const slides = [
   },
   {
     title: "Bail Project Engagement Giveaway",
-    summary:
-      "Data engagement giveaway.\n\nCreated for The Bail Project.",
+    summary: "Data engagement giveaway.",
     screen: "./assets/animated/mug-2.gif",
     thumb: "./assets/thumbs/page-16.jpg",
     mediaScale: 1,
@@ -228,6 +226,10 @@ function setActiveSlide(index) {
   activeIndex = (index + slides.length) % slides.length;
   const slide = slides[activeIndex];
   document.body.dataset.activeSlide = String(activeIndex);
+  const imageSource =
+    typeof slide.screen === "string" && /\.gif($|\?)/i.test(slide.screen)
+      ? `${slide.screen}${slide.screen.includes("?") ? "&" : "?"}refresh=${Date.now()}`
+      : slide.screen;
 
   if (slide.mediaType === "frame") {
     stageScroll.style.display = "none";
@@ -249,7 +251,7 @@ function setActiveSlide(index) {
     stageFrame.style.display = "none";
     stageFrame.src = "about:blank";
     stageImage.style.display = "block";
-    stageImage.src = slide.screen;
+    stageImage.src = imageSource;
     stageImage.alt = slide.title;
   }
 
@@ -270,6 +272,7 @@ function setActiveSlide(index) {
   stage.classList.toggle("cv-zoomed", false);
 
   infoTitle.textContent = slide.title;
+  infoTitle.hidden = slide.title.length === 0;
   infoSummary.textContent = slide.summary;
 
   if (activeIndex === 0) {
