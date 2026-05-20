@@ -10,7 +10,7 @@ const slides = [
     mediaShiftY: "-1.75%",
     disableInfo: true,
     overlayHtml:
-      '<div class="cover-block"><div class="cover-title">Sunyoung Lie</div><div class="cover-copy">Data Portfolio: Data and design products that enhance<br />knowledge systems at nonprofit organizations</div></div>',
+      '<div class="cover-block"><div class="cover-title">Sunyoung Lie</div><div class="cover-copy">Data portfolio: products that advance nonprofit strategic goals through data collection, analysis, visualization, and knowledge management</div></div>',
   },
   {
     title: "Placements vs. Actively Homeless Animation",
@@ -182,6 +182,28 @@ const globalCvLink = document.getElementById("global-cv-link");
 
 let activeIndex = 0;
 
+function getInitialSlideIndex() {
+  const params = new URLSearchParams(window.location.search);
+  const slideParam = params.get("slide");
+  if (slideParam) {
+    const slideNumber = Number(slideParam);
+    if (Number.isInteger(slideNumber) && slideNumber >= 1 && slideNumber <= slides.length) {
+      return slideNumber - 1;
+    }
+  }
+
+  const hash = window.location.hash.trim().toLowerCase();
+  const hashMatch = hash.match(/^#(?:page-)?(\d{1,2})$/);
+  if (hashMatch) {
+    const slideNumber = Number(hashMatch[1]);
+    if (Number.isInteger(slideNumber) && slideNumber >= 1 && slideNumber <= slides.length) {
+      return slideNumber - 1;
+    }
+  }
+
+  return 0;
+}
+
 function buildFilmstrip() {
   slides.forEach((slide, index) => {
     const button = document.createElement("button");
@@ -272,7 +294,7 @@ function nudgeFilmstrip(direction) {
 }
 
 buildFilmstrip();
-setActiveSlide(0);
+setActiveSlide(getInitialSlideIndex());
 
 function positionInfoCard(event) {
   const stageRect = stage.getBoundingClientRect();
