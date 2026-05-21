@@ -98,3 +98,296 @@ const slides = [
     summary:
       "Dataforprogress.org landing page.\n\nThe client needed a captivating home page that communicated the extent of corporate involvement in key legislative issues.",
     screen: "./assets/animated/cap-logos-type-locked.gif",
+    thumb: "./assets/thumbs/page-11.jpg",
+    mediaScale: 1.02,
+    mediaShiftX: "0",
+    mediaShiftY: "-1.75%",
+  },
+  {
+    title: "Data for Progress Social Media visualization",
+    summary: "Retweeted by Nate Silver",
+    screen: "./assets/screens/page-12-reference.png",
+    thumb: "./assets/thumbs/page-12.jpg",
+    mediaScale: 1,
+    mediaShiftX: "0",
+    mediaShiftY: "-1.75%",
+  },
+  {
+    title: "",
+    summary:
+      "Graduation invitation.\n\nAfter many years operating a beloved in person community space for NYC teens, exalt needed a compelling way to communicate the robust work it was continuing to do and celebrate during Covid remote restrictions.",
+    screen: "./assets/animated/exalt-gala-flyer.gif",
+    thumb: "./assets/thumbs/page-13.jpg",
+    mediaScale: 1,
+    mediaShiftX: "0",
+    mediaShiftY: "-1.75%",
+  },
+  {
+    title: "Income Inequality Publication",
+    summary:
+      "Question: how can we effectively communicate the extent of income inequality?\nCreated for New York State legislation amendment.",
+    screen: "./assets/screens/page-14.jpg",
+    thumb: "./assets/thumbs/page-14.jpg",
+    mediaScale: 1,
+    mediaShiftX: "0",
+    mediaShiftY: "-1.75%",
+  },
+  {
+    title: "YMCA NYC Branch Monitoring",
+    summary:
+      "Question: how can we prepare for possible branch closures by monitoring Covid rates and vaccinations near our branches?",
+    screen: "./assets/screens/page-15-reference.png",
+    thumb: "./assets/thumbs/page-15.jpg",
+    mediaScale: 1,
+    mediaShiftX: "0",
+    mediaShiftY: "-1.75%",
+  },
+  {
+    title: "Bail Project Engagement Giveaway",
+    summary: "Data engagement giveaway.",
+    screen: "./assets/animated/mug-2.gif",
+    thumb: "./assets/thumbs/page-16.jpg",
+    mediaScale: 1,
+    mediaShiftX: "0",
+    mediaShiftY: "-1.75%",
+  },
+  {
+    title: "CV",
+    summary: "Product resume.",
+    mediaType: "scroll-image",
+    screen: "./assets/screens/page-17-resume.png",
+    thumb: "./assets/thumbs/page-17.jpg",
+    mediaScale: 1,
+    mediaShiftX: "0",
+    mediaShiftY: "0",
+    disableInfo: true,
+  },
+];
+
+const stage = document.getElementById("stage");
+const stageImage = document.getElementById("stage-image");
+const stageFrame = document.getElementById("stage-frame");
+const stageScroll = document.getElementById("stage-scroll");
+const stageScrollImage = document.getElementById("stage-scroll-image");
+const stageOverlay = document.getElementById("stage-overlay");
+const infoTitle = document.getElementById("info-title");
+const infoSummary = document.getElementById("info-summary");
+const filmstrip = document.getElementById("filmstrip");
+const infoCard = document.getElementById("info-card");
+const globalCvLink = document.getElementById("global-cv-link");
+
+let activeIndex = 0;
+
+function getInitialSlideIndex() {
+  const params = new URLSearchParams(window.location.search);
+  const slideParam = params.get("slide");
+  if (slideParam) {
+    const slideNumber = Number(slideParam);
+    if (Number.isInteger(slideNumber) && slideNumber >= 1 && slideNumber <= slides.length) {
+      return slideNumber - 1;
+    }
+  }
+
+  const hash = window.location.hash.trim().toLowerCase();
+  const hashMatch = hash.match(/^#(?:page-)?(\d{1,2})$/);
+  if (hashMatch) {
+    const slideNumber = Number(hashMatch[1]);
+    if (Number.isInteger(slideNumber) && slideNumber >= 1 && slideNumber <= slides.length) {
+      return slideNumber - 1;
+    }
+  }
+
+  return 0;
+}
+
+function buildFilmstrip() {
+  slides.forEach((slide, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "thumb-button";
+    button.setAttribute("role", "tab");
+    button.setAttribute("aria-selected", "false");
+    button.setAttribute("aria-label", `${slide.title}, page ${index + 1}`);
+    button.dataset.index = String(index);
+
+    button.innerHTML = `
+      <img class="thumb-image" src="${slide.thumb}" alt="" />
+      <span class="thumb-tooltip">${slide.title}</span>
+    `;
+
+    button.addEventListener("click", () => setActiveSlide(index));
+    filmstrip.appendChild(button);
+  });
+}
+
+function setActiveSlide(index) {
+  activeIndex = (index + slides.length) % slides.length;
+  const slide = slides[activeIndex];
+  document.body.dataset.activeSlide = String(activeIndex);
+  const imageSource =
+    typeof slide.screen === "string" && /\.gif($|\?)/i.test(slide.screen)
+      ? `${slide.screen}${slide.screen.includes("?") ? "&" : "?"}refresh=${Date.now()}`
+      : slide.screen;
+
+  if (slide.mediaType === "frame") {
+    stageScroll.style.display = "none";
+    stageImage.style.display = "none";
+    stageFrame.style.display = "block";
+    stageFrame.src = slide.screen;
+    stageFrame.title = slide.title;
+  } else if (slide.mediaType === "scroll-image") {
+    stageImage.style.display = "none";
+    stageFrame.style.display = "none";
+    stageFrame.src = "about:blank";
+    stageScroll.style.display = "flex";
+    stageScroll.classList.remove("zoomed");
+    stageScroll.scrollTop = 0;
+    stageScrollImage.src = slide.screen;
+    stageScrollImage.alt = slide.title;
+  } else {
+    stageScroll.style.display = "none";
+    stageFrame.style.display = "none";
+    stageFrame.src = "about:blank";
+    stageImage.style.display = "block";
+    stageImage.src = imageSource;
+    stageImage.alt = slide.title;
+  }
+
+  infoTitle.classList.remove("cover-text", "cover-name");
+  infoSummary.classList.remove("cover-summary");
+
+  stageImage.style.setProperty("--media-scale", slide.mediaScale ?? 1);
+  stageImage.style.setProperty("--media-shift-x", slide.mediaShiftX ?? "0");
+  stageImage.style.setProperty("--media-shift-y", slide.mediaShiftY ?? "-1.75%");
+  stageFrame.style.setProperty("--media-scale", slide.mediaScale ?? 1);
+  stageFrame.style.setProperty("--media-shift-x", slide.mediaShiftX ?? "0");
+  stageFrame.style.setProperty("--media-shift-y", slide.mediaShiftY ?? "-1.75%");
+
+  stageOverlay.innerHTML = slide.overlayHtml ?? "";
+  stageOverlay.classList.toggle("show", Boolean(slide.overlayHtml));
+  stageOverlay.classList.toggle("hover-only", slide.overlayMode === "hover-only");
+  stage.classList.toggle("no-info", Boolean(slide.disableInfo));
+  stage.classList.toggle("cv-zoomed", false);
+
+  infoTitle.textContent = slide.title;
+  infoTitle.hidden = slide.title.length === 0;
+  infoSummary.textContent = slide.summary;
+
+  if (activeIndex === 0) {
+    infoTitle.classList.add("cover-text", "cover-name");
+    infoSummary.classList.add("cover-summary");
+  }
+
+  document.querySelectorAll(".thumb-button").forEach((button, buttonIndex) => {
+    const selected = buttonIndex === activeIndex;
+    button.setAttribute("aria-selected", String(selected));
+    if (selected) {
+      button.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  });
+}
+
+function nudgeFilmstrip(direction) {
+  filmstrip.scrollBy({
+    left: direction * 320,
+    behavior: "smooth",
+  });
+}
+
+buildFilmstrip();
+setActiveSlide(getInitialSlideIndex());
+
+function positionInfoCard(event) {
+  const stageRect = stage.getBoundingClientRect();
+  const cardRect = infoCard.getBoundingClientRect();
+  const offset = 18;
+  const maxLeft = stageRect.width - cardRect.width - 12;
+  const maxTop = stageRect.height - cardRect.height - 12;
+  const nextLeft = Math.min(Math.max(event.clientX - stageRect.left + offset, 12), maxLeft);
+  const nextTop = Math.min(Math.max(event.clientY - stageRect.top + offset, 12), maxTop);
+  infoCard.style.setProperty("--card-x", `${nextLeft}px`);
+  infoCard.style.setProperty("--card-y", `${nextTop}px`);
+}
+
+function positionStageOverlayCursor(event) {
+  const stageRect = stage.getBoundingClientRect();
+  const nextLeft = event.clientX - stageRect.left;
+  const nextTop = event.clientY - stageRect.top;
+  stageOverlay.style.setProperty("--overlay-cursor-x", `${nextLeft}px`);
+  stageOverlay.style.setProperty("--overlay-cursor-y", `${nextTop}px`);
+
+  const coverBlock = stageOverlay.querySelector(".cover-block");
+  if (coverBlock) {
+    const blockRect = coverBlock.getBoundingClientRect();
+    const coverX = Math.min(Math.max(event.clientX - blockRect.left, 0), blockRect.width);
+    const coverY = Math.min(Math.max(event.clientY - blockRect.top, 0), blockRect.height);
+    coverBlock.style.setProperty("--cover-cursor-x", `${coverX}px`);
+    coverBlock.style.setProperty("--cover-cursor-y", `${coverY}px`);
+  }
+}
+
+document.getElementById("prev-slide").addEventListener("click", () => setActiveSlide(activeIndex - 1));
+document.getElementById("next-slide").addEventListener("click", () => setActiveSlide(activeIndex + 1));
+document.getElementById("thumbs-left").addEventListener("click", () => nudgeFilmstrip(-1));
+document.getElementById("thumbs-right").addEventListener("click", () => nudgeFilmstrip(1));
+globalCvLink.addEventListener("click", () => setActiveSlide(16));
+stage.addEventListener("mousemove", positionInfoCard);
+stage.addEventListener("mouseenter", positionInfoCard);
+stage.addEventListener("mousemove", positionStageOverlayCursor);
+stage.addEventListener("mouseenter", positionStageOverlayCursor);
+
+stage.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    setActiveSlide(activeIndex - 1);
+  }
+
+  if (event.key === "ArrowRight") {
+    event.preventDefault();
+    setActiveSlide(activeIndex + 1);
+  }
+});
+
+window.addEventListener("keydown", (event) => {
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+    return;
+  }
+
+  if (event.key === "ArrowLeft") {
+    setActiveSlide(activeIndex - 1);
+  }
+
+  if (event.key === "ArrowRight") {
+    setActiveSlide(activeIndex + 1);
+  }
+});
+
+stage.addEventListener("click", () => {
+  if (window.innerWidth <= 920) {
+    stage.classList.toggle("show-info");
+  }
+});
+
+stageScroll.addEventListener("click", (event) => {
+  if (slides[activeIndex]?.mediaType !== "scroll-image") {
+    return;
+  }
+
+  event.stopPropagation();
+  stageScroll.classList.toggle("zoomed");
+  stage.classList.toggle("cv-zoomed", stageScroll.classList.contains("zoomed"));
+  stageScroll.scrollTop = 0;
+});
+
+stageOverlay.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+
+  const slideTarget = target.dataset.slideTarget;
+  if (slideTarget) {
+    event.preventDefault();
+    setActiveSlide(Number(slideTarget));
+  }
+});
