@@ -98,6 +98,7 @@ const slides = [
     summary:
       "Dataforprogress.org landing page.\n\nThe client needed a captivating home page that communicated the extent of corporate involvement in key legislative issues.",
     screen: "./assets/animated/cap-logos-type-locked.gif",
+    poster: "./assets/screens/page-11-poster.png",
     thumb: "./assets/thumbs/page-11.jpg",
     mediaScale: 1.02,
     mediaShiftX: "0",
@@ -117,6 +118,7 @@ const slides = [
     summary:
       "Graduation invitation.\n\nAfter many years operating a beloved in person community space for NYC teens, exalt needed a compelling way to communicate the robust work it was continuing to do and celebrate during Covid remote restrictions.",
     screen: "./assets/animated/exalt-gala-flyer.gif",
+    poster: "./assets/screens/page-13-poster.png",
     thumb: "./assets/thumbs/page-13.jpg",
     mediaScale: 1,
     mediaShiftX: "0",
@@ -146,6 +148,7 @@ const slides = [
     title: "Bail Project Engagement Giveaway",
     summary: "Data engagement giveaway.",
     screen: "./assets/animated/mug-2.gif",
+    poster: "./assets/screens/page-16-poster.png",
     thumb: "./assets/thumbs/page-16.jpg",
     mediaScale: 1,
     mediaShiftX: "0",
@@ -250,17 +253,33 @@ function setActiveSlide(index) {
     stageFrame.style.display = "none";
     stageFrame.src = "about:blank";
     const nextToken = ++imageLoadToken;
-    stageImage.classList.add("is-loading");
     stageImage.style.display = "block";
-    stageImage.removeAttribute("src");
+    stageImage.classList.toggle("is-loading", !slide.poster);
+    if (slide.poster) {
+      stageImage.src = slide.poster;
+    } else {
+      stageImage.removeAttribute("src");
+    }
     stageImage.alt = slide.title;
-    stageImage.onload = () => {
-      if (nextToken !== imageLoadToken) {
-        return;
-      }
-      stageImage.classList.remove("is-loading");
-    };
-    stageImage.src = imageSource;
+    if (slide.poster) {
+      const loader = new Image();
+      loader.onload = () => {
+        if (nextToken !== imageLoadToken) {
+          return;
+        }
+        stageImage.classList.remove("is-loading");
+        stageImage.src = imageSource;
+      };
+      loader.src = imageSource;
+    } else {
+      stageImage.onload = () => {
+        if (nextToken !== imageLoadToken) {
+          return;
+        }
+        stageImage.classList.remove("is-loading");
+      };
+      stageImage.src = imageSource;
+    }
   }
 
   infoTitle.classList.remove("cover-text", "cover-name");
