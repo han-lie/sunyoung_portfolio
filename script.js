@@ -177,6 +177,7 @@ const infoCard = document.getElementById("info-card");
 const globalCvLink = document.getElementById("global-cv-link");
 
 let activeIndex = 0;
+let imageLoadToken = 0;
 
 function getInitialSlideIndex() {
   const params = new URLSearchParams(window.location.search);
@@ -248,9 +249,18 @@ function setActiveSlide(index) {
     stageScroll.style.display = "none";
     stageFrame.style.display = "none";
     stageFrame.src = "about:blank";
+    const nextToken = ++imageLoadToken;
+    stageImage.classList.add("is-loading");
     stageImage.style.display = "block";
-    stageImage.src = imageSource;
+    stageImage.removeAttribute("src");
     stageImage.alt = slide.title;
+    stageImage.onload = () => {
+      if (nextToken !== imageLoadToken) {
+        return;
+      }
+      stageImage.classList.remove("is-loading");
+    };
+    stageImage.src = imageSource;
   }
 
   infoTitle.classList.remove("cover-text", "cover-name");

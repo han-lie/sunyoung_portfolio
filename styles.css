@@ -98,6 +98,10 @@ body {
   transform-origin: center center;
 }
 
+.stage-image.is-loading {
+  opacity: 0;
+}
+
 .stage-frame {
   width: 100%;
   height: 100%;
